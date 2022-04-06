@@ -36,7 +36,8 @@ def p_def_relation(t):
     '''relation : NAME LPAREN items RPAREN
                 | NAME LPAREN optional RPAREN
                 | NAME LPAREN optional COMA items RPAREN
-                | NAME LPAREN items COMA optional RPAREN'''
+                | NAME LPAREN items COMA optional RPAREN
+                | NAME LPAREN items COMA optional COMA items RPAREN'''
     if len(t) == 5:
         print (t[1],"->",t[3])
     if len(t) == 7:
