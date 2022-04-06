@@ -29,54 +29,58 @@ def p_def_def(t):
 
 
 
-
-
 def p_def_relations(t):
     '''relations : relation
                 | relations relation'''
 def p_def_relation(t):
     '''relation : NAME LPAREN items RPAREN
-                | NAME LPAREN optionals RPAREN'''
-    print (t[1],"->",t[3])
+                | NAME LPAREN optional RPAREN
+                | NAME LPAREN optional COMA items RPAREN
+                | NAME LPAREN items COMA optional RPAREN'''
+    if len(t) == 5:
+        print (t[1],"->",t[3])
+    if len(t) == 7:
+        print (t[1],"->",t[3])
+        print (t[1],"->",t[5])
     #print(t[3].split(','))
 
 
-def p_def_optionals(t):
-    '''optionals : optional
-                | optionals optional'''
-    
-    if len(t) == 2:
-        t[0] = t[1]
-    if len(t) == 3:
-        t[0] = t[1] + t[2]
-    return t[0]
+
 
 
 def p_def_optional(t):
-    'optional : OPT LPAREN items RPAREN'
-    t[0] = t[1] + t[2] + t[3] + t[4]
+    '''optional : OPT LPAREN items RPAREN'''
+    optional_items = t[3].split(',')
+    for i in range (len(optional_items)):
+        optional_items[i] = '*' + optional_items[i]
+    
+    print (optional_items)
+    result = ""
+    for i in optional_items:
+        result += i
+        result += ','
+    result = result[0:-1]
+        
+    t[0] = result
     print (t[0])
     return t[0]
 
 
 def p_def_items(t):
-    '''items : NAME COMA NAME 
-                | items COMA NAME'''
+    '''items : NAME
+             | items COMA NAME'''
     if len(t) == 2:
+        t[0] = t[1]
+    elif len(t) == 3:
         t[0] = t[1] + t[2] + t[3]
     else:
         t[0] = t[1] + t[2] + t[3]
     
-    print (t[1],"->",t[3])
-    return t[0]
-
-'''
-def p_def_optional(t):
-    'optional : OPT LPAREN items RPAREN'
-    t[0] = t[1] + t[2] + t[3] + t[4]
+    #print (t[1],"->",t[3])
     print (t[0])
     return t[0]
-'''
+
+
 
 
 
