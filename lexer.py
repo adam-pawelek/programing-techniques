@@ -1,5 +1,5 @@
 tokens = (
- 'NAME','RPAREN','LPAREN','COMA','OPT'
+ 'NAME','RPAREN','LPAREN','COMA','OPT', 'ALL', 'ONEOF','MOREOF', "COLON"
  )
 literals = "(),"
 def t_OPT(t):
@@ -8,9 +8,23 @@ def t_OPT(t):
 def t_NAME(t):
     r'[a-zA-Z]+'
     return t
+
+def t_ALL(t):
+    r'all'
+    return t
+
+def t_ONEOF(t):
+    r'one-of'
+    return t
+
+def t_MOREOF(t):
+    r'more-of'
+    return t
+
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_COMA = r'\,'
+t_COLON = r'\:'
 # Ignored characters
 t_ignore = " \t"
 
@@ -23,27 +37,43 @@ lexer = lex.lex()
 
 
 
-def p_def_def(t):
-    'def : relations'
+def p_def_your_end(t):
+    '''yourEnd : NAME COLON NAME relation'''
+
+    if t[3] == "all":
+        print ("hurra")
+    print (t[3])
 
 
 
 
-def p_def_relations(t):
-    '''relations : relation
-                | relations relation'''
+#def p_def_def(t):
+#    'def : relations'
+
+
+#def p_def_relations(t):
+#    '''relations : relation
+#                | relations relation'''
+
 def p_def_relation(t):
-    '''relation : NAME LPAREN items RPAREN
-                | NAME LPAREN optional RPAREN
-                | NAME LPAREN optional COMA items RPAREN
-                | NAME LPAREN items COMA optional RPAREN
-                | NAME LPAREN items COMA optional COMA items RPAREN'''
-    if len(t) == 5:
-        print (t[1],"->",t[3])
-    if len(t) == 7:
-        print (t[1],"->",t[3])
+    '''relation : LPAREN items RPAREN
+                | LPAREN optional RPAREN
+                | LPAREN optional COMA items RPAREN
+                | LPAREN items COMA optional RPAREN
+                | LPAREN items COMA optional COMA items RPAREN'''
+    if len(t) == 4:
+        print (4)
+        t[0] = t[2]
+    if len(t) == 6:
+        t[0] = t[2] + ',' + t[4]
+        print (6)
         print (t[1],"->",t[5])
+    if len(t) == 8:
+        t[0] = t[2] + ',' + t[4] + ',' + t[6]
+    print (f"t[0] = {t[0]}")
     #print(t[3].split(','))
+    print ("tutaj")
+    return t[0]
 
 
 
