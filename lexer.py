@@ -35,14 +35,20 @@ import ply.lex as lex
 lexer = lex.lex()
 
 
+graph = {}
 
 
 def p_def_your_end(t):
     '''yourEnd : NAME COLON NAME relation'''
+    global graph
+    ingredients = t[4].split(',')
+    for i in ingredients:
+        if t[1] not  in graph:
+            graph[t[1]] = []
+        graph[t[1]].append([i,t[3]])
 
-    if t[3] == "all":
-        print ("hurra")
-    print (t[3])
+    
+    print (graph)
 
 
 
