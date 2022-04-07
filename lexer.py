@@ -6,7 +6,7 @@ def t_OPT(t):
     r'opt'
     return t
 def t_NAME(t):
-    r'[a-zA-Z]+'
+    r'[a-zA-Z0-9-]+'
     return t
 
 def t_ALL(t):
@@ -36,6 +36,11 @@ lexer = lex.lex()
 
 
 graph = {}
+
+def p_def_relations(t):
+    '''relations : yourEnd
+                | relations yourEnd'''
+
 
 
 def p_def_your_end(t):
@@ -128,9 +133,56 @@ import ply.yacc as yacc
 parser = yacc.yacc() 
 
 
+
+
+import sys
+if len(sys.argv) < 2 :
+ sys.exit("Usage: %s <filename>" % sys.argv[0])
+fp = open(sys.argv[1])
+contents=fp.read()
+parser.parse(contents) 
+
+result = "digraph { \n"
+
+for key, item_list in graph.items():
+    for value in item_list: 
+        print (f"moj {key} -> {value}")
+        if value[1] == "all":
+            if value[0][0] == '*':
+                result += f'{key} -> {value[0][1:]} [arrowhead = curve label="opt", color=yellow] \n'
+            else:
+                result += f"{key} -> {value[0]} [arrowhead = dot, color=red] \n"
+        elif value[1] == "one-of":
+            result += f"{key} -> {value[0]} [arrowhead = dot, color=blue] \n"
+        elif value[1] == "more-of":
+            result += f"{key} -> {value[0]} [arrowhead = dot, color=black] \n"
+        print (result)
+
+result += "}"
+f = open("result.txt", "a")
+f.write(result)
+f.close()
+
+
+'''
 while True:
     try:
         s = input('')
     except EOFError:
         break
     parser.parse(s)
+    for key, item_list in graph.items():
+        for value in item_list: 
+            print (f"moj {key} -> {value}")
+            if value[1] == "all":
+                if value[0][0] == '*':
+                    result += f'{key} -> {value[0][1:]} [arrowhead = curve label="opt", color=yellow] \n'
+                else:
+                    result += f"{key} -> {value[0]} [arrowhead = dot, color=red] \n"
+            elif value[1] == "one-of":
+                result += f"{key} -> {value[0]} [arrowhead = dot, color=blue] \n"
+            elif value[1] == "one-of":
+                result += f"{key} -> {value[0]} [arrowhead = dot, color=black] \n"
+            print (result)
+
+'''
