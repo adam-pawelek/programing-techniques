@@ -1,5 +1,5 @@
 tokens = (
- 'NAME','RPAREN','LPAREN','COMA','OPT', 'ALL', 'ONEOF','MOREOF', "COLON"
+ 'NAME','RPAREN','LPAREN','COMA','OPT', "COLON"
  )
 literals = "(),"
 def t_OPT(t):
@@ -37,14 +37,26 @@ lexer = lex.lex()
 
 graph = {}
 
-def p_def_relations(t):
-    '''relations : yourEnd
-                | relations yourEnd'''
+
+
+#example of connect_graphs
+'''
+Bicycle   : all     (Frame, Gear, opt (Accessory)  )
+Frame     : one-of  (small, medium,big             )
+Gear      : one-of  (18   , 24                     )
+Accessory : more-of (light, bell                   )
+'''
+
+def p_def_connect_graphs(t):
+    '''connect_graphs : create_subgraph
+                | connect_graphs create_subgraph'''
 
 
 
-def p_def_your_end(t):
-    '''yourEnd : NAME COLON NAME relation'''
+# subgraph are for example -> Bicycle   : all     (Frame, Gear, opt (Accessory)  )
+
+def p_def_create_subgraph(t):
+    '''create_subgraph : NAME COLON NAME relation'''
     global graph
     ingredients = t[4].split(',')
     for i in ingredients:
@@ -54,6 +66,8 @@ def p_def_your_end(t):
 
     
 
+# relation are all elements inside ()
+# example of relation -> (Frame, Gear, opt (Accessory)  )
 
 def p_def_relation(t):
     '''relation : LPAREN items RPAREN
@@ -73,6 +87,9 @@ def p_def_relation(t):
 
 
 
+# define optional
+# example of optional -> opt (Accessory) 
+
 def p_def_optional(t):
     '''optional : OPT LPAREN items RPAREN'''
     optional_items = t[3].split(',')
@@ -88,6 +105,10 @@ def p_def_optional(t):
     t[0] = result
     return t[0]
 
+
+#define items -items are all elements insde of brackets excluding opt (sth,sth)
+# items are also parameters inside of opt
+# example of items -> Frame, Gear
 
 def p_def_items(t):
     '''items : NAME
@@ -122,6 +143,8 @@ contents=fp.read()
 parser.parse(contents) 
 
 result = "digraph { \n"
+
+# translate graph to dot language
 
 for key, item_list in graph.items():
     for value in item_list: 
