@@ -29,7 +29,7 @@ t_COLON = r'\:'
 t_ignore = " \t"
 
 def t_error(t):
-    print("Illegal character '%s'" % t.value[0])
+    #print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 import ply.lex as lex
 lexer = lex.lex()
@@ -53,18 +53,7 @@ def p_def_your_end(t):
         graph[t[1]].append([i,t[3]])
 
     
-    print (graph)
 
-
-
-
-#def p_def_def(t):
-#    'def : relations'
-
-
-#def p_def_relations(t):
-#    '''relations : relation
-#                | relations relation'''
 
 def p_def_relation(t):
     '''relation : LPAREN items RPAREN
@@ -73,17 +62,11 @@ def p_def_relation(t):
                 | LPAREN items COMA optional RPAREN
                 | LPAREN items COMA optional COMA items RPAREN'''
     if len(t) == 4:
-        print (4)
         t[0] = t[2]
     if len(t) == 6:
         t[0] = t[2] + ',' + t[4]
-        print (6)
-        print (t[1],"->",t[5])
     if len(t) == 8:
         t[0] = t[2] + ',' + t[4] + ',' + t[6]
-    print (f"t[0] = {t[0]}")
-    #print(t[3].split(','))
-    print ("tutaj")
     return t[0]
 
 
@@ -96,7 +79,6 @@ def p_def_optional(t):
     for i in range (len(optional_items)):
         optional_items[i] = '*' + optional_items[i]
     
-    print (optional_items)
     result = ""
     for i in optional_items:
         result += i
@@ -104,7 +86,6 @@ def p_def_optional(t):
     result = result[0:-1]
         
     t[0] = result
-    print (t[0])
     return t[0]
 
 
@@ -118,8 +99,6 @@ def p_def_items(t):
     else:
         t[0] = t[1] + t[2] + t[3]
     
-    #print (t[1],"->",t[3])
-    print (t[0])
     return t[0]
 
 
@@ -156,7 +135,6 @@ for key, item_list in graph.items():
             result += f"{key} -> {value[0]} [arrowhead = dot, color=blue] \n"
         elif value[1] == "more-of":
             result += f"{key} -> {value[0]} [arrowhead = dot, color=black] \n"
-        print (result)
 
 result += "}"
 f = open("result.txt", "w")
@@ -164,25 +142,3 @@ f.write(result)
 f.close()
 
 
-'''
-while True:
-    try:
-        s = input('')
-    except EOFError:
-        break
-    parser.parse(s)
-    for key, item_list in graph.items():
-        for value in item_list: 
-            print (f"moj {key} -> {value}")
-            if value[1] == "all":
-                if value[0][0] == '*':
-                    result += f'{key} -> {value[0][1:]} [arrowhead = curve label="opt", color=yellow] \n'
-                else:
-                    result += f"{key} -> {value[0]} [arrowhead = dot, color=red] \n"
-            elif value[1] == "one-of":
-                result += f"{key} -> {value[0]} [arrowhead = dot, color=blue] \n"
-            elif value[1] == "one-of":
-                result += f"{key} -> {value[0]} [arrowhead = dot, color=black] \n"
-            print (result)
-
-'''
