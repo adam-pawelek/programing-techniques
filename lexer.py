@@ -159,7 +159,7 @@ for key, item_list in graph.items():
         print (result)
 
 result += "}"
-f = open("result.txt", "a")
+f = open("result.txt", "w")
 f.write(result)
 f.close()
 
